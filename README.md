@@ -5,7 +5,7 @@ Assignment for Theoretical Computer Science subject at Innopolis University, 3rd
 
 Given a FSA description in the `fsa.txt` (see input file format), your program should output the `result.txt` containing an error description (see validation result) or a report, indicating if FSA is complete (or incomplete) and warning (see warning messages) if any. Errors and warning should be sorted according to their code. 
 
-### Input file format
+## Input file format
 
 | Lines in inputt file | Description                                                                |
 | -------------------- | -------------------------------------------------------------------------- |
