@@ -11,4 +11,8 @@ public class State {
     }
 
     private LinkedList<Pair<String, State>> trans;
+
+    public void addTrans(String letter, State toState) {
+        this.trans.add(new Pair<>(letter, toState));
+    }
 }
