@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 /**
  * This class reads FSA description in the 'fsa.txt' and gives output 'result.txt' containing an error description or
- * a report, indicating if FSA is complete (or incomplete) and warning if any
+ * a report, indicating if FSA is complete (or incomplete) and warning if any.
  *
  * @author Irek Nazmiev <i.nazmiev@innopolis.ru> B17-05, Innopolis University
  */
