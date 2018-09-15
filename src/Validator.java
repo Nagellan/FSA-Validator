@@ -27,12 +27,18 @@ public class Validator {
 
         String statesStr = in.next();
         String alphaStr = in.next();
+        String initStateStr = in.next();
+        String finStateStr = in.next();
 
         LinkedList<State> states = formatStates(statesStr);
         LinkedList<String> alpha = formatAlpha(alphaStr);
+        String initStateName = initStateStr.substring(9, initStateStr.length() - 1);
+        String finStateName = finStateStr.substring(8, finStateStr.length() - 1);
 
         fileData.put("states", states);
         fileData.put("alpha", alpha);
+        fileData.put("initState", new State(initStateName));
+        fileData.put("finState", new State(finStateName));
 
         return fileData;
     }
