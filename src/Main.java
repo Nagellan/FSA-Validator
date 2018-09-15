@@ -13,5 +13,12 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         Scanner in = new Scanner(new File("fsa.txt"));
         PrintWriter out = new PrintWriter("result.txt");
+
+        Validator fsaValid = new Validator(in);
+        String result = fsaValid.start();
+        out.print(result);
+
+        in.close();
+        out.close();
     }
 }
