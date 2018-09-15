@@ -6,13 +6,19 @@ import java.util.LinkedList;
  * Each state has a set of transitions represented as pairs of letter and state connected by it with the original one.
  */
 public class State {
-    public State() {
+    public State(String name) {
+        this.name = name;
         this.trans = new LinkedList<>();
     }
 
+    private String name;
     private LinkedList<Pair<String, State>> trans;
 
     public void addTrans(String letter, State toState) {
         this.trans.add(new Pair<>(letter, toState));
+    }
+
+    public String getName() {
+        return name;
     }
 }
