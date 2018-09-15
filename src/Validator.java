@@ -103,6 +103,21 @@ public class Validator {
     }
 
     /**
+     * This method finds and returns state in State list by the name
+     *
+     * @param name - name of state to find
+     * @return state with given name
+     */
+    private State findByName(String name) {
+        for (State state : this.states) {
+            if (state.getName().equals(name))
+                return state;
+        }
+
+        return null;
+    }
+
+    /**
      * This method starts the validation of FSA.
      *
      * @return String with the result of validation which later will be printed into the output file
