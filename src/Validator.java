@@ -29,16 +29,19 @@ public class Validator {
         String alphaStr = in.next();
         String initStateStr = in.next();
         String finStateStr = in.next();
+        String transStr = in.next();
 
         LinkedList<State> states = formatStates(statesStr);
         LinkedList<String> alpha = formatAlpha(alphaStr);
         String initStateName = initStateStr.substring(9, initStateStr.length() - 1);
         String finStateName = finStateStr.substring(8, finStateStr.length() - 1);
+        LinkedList<String> trans = formatTrans(transStr);
 
         fileData.put("states", states);
         fileData.put("alpha", alpha);
         fileData.put("initState", new State(initStateName));
         fileData.put("finState", new State(finStateName));
+        fileData.put("trans", trans);
 
         return fileData;
     }
@@ -61,6 +64,15 @@ public class Validator {
         resAlpha.addAll(Arrays.asList(alpha));
 
         return resAlpha;
+    }
+
+    private LinkedList<String> formatTrans(String transStr) {
+        LinkedList<String> resTrans = new LinkedList<>();
+        String[] trans = transStr.substring(7, transStr.length() - 1).split(",");
+
+        resTrans.addAll(Arrays.asList(trans));
+
+        return resTrans;
     }
 
     public String start() {
