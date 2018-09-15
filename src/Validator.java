@@ -26,8 +26,13 @@ public class Validator {
         Dictionary fileData = new Hashtable();
 
         String statesStr = in.next();
+        String alphaStr = in.next();
 
         LinkedList<State> states = formatStates(statesStr);
+        LinkedList<String> alpha = formatAlpha(alphaStr);
+
+        fileData.put("states", states);
+        fileData.put("alpha", alpha);
 
         return fileData;
     }
@@ -41,6 +46,15 @@ public class Validator {
         }
 
         return resStates;
+    }
+
+    private LinkedList<String> formatAlpha(String alphaStr) {
+        LinkedList<String> resAlpha = new LinkedList<>();
+        String[] alpha = alphaStr.substring(7, alphaStr.length() - 1).split(",");
+
+        resAlpha.addAll(Arrays.asList(alpha));
+
+        return resAlpha;
     }
 
     public String start() {
