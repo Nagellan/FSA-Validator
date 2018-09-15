@@ -1,4 +1,4 @@
-import java.util.LinkedList;
+import java.util.*;
 
 /**
  * This class represents an FSA. It checks the FSA and returns an error if exists
@@ -6,21 +6,44 @@ import java.util.LinkedList;
  * @author Irek Nazmiev <i.nazmiev@innopolis.ru> B17-05, Innopolis University
  */
 public class Validator {
-    public Validator() {
-        this.states = new LinkedList<>();
-        this.alpha = new LinkedList<>();
-        this.initState = new State();
-        this.finState = new State();
-        this.trans = new LinkedList<>();
+    public Validator(Scanner in) {
+        Dictionary fileData = formatInFile(in);
+
+        this.states = (LinkedList<State>) fileData.get("states");
+        this.alpha = (LinkedList<String>) fileData.get("alpha");
+        this.initState = (State) fileData.get("initState");
+        this.finState = (State) fileData.get("finState");
+        this.trans = (LinkedList<String>) fileData.get("trans");
     }
 
     private LinkedList<State> states;   // set of states of FSA
-
     private LinkedList<String> alpha;   // alphabet of FST
-
     private State initState;            // initial state of FST
-
     private State finState;             // finish state of FST
-
     private LinkedList<String> trans;   // transitions of FST
+
+    private Dictionary formatInFile(Scanner in) {
+        Dictionary fileData = new Hashtable();
+
+        String statesStr = in.next();
+
+        LinkedList<State> states = formatStates(statesStr);
+
+        return fileData;
+    }
+
+    private LinkedList<State> formatStates(String statesStr) {
+        LinkedList<State> resStates = new LinkedList<>();
+        String[] states = statesStr.substring(8, statesStr.length() - 1).split(",");
+
+        for (String stateName : states) {
+            resStates.add(new State(stateName));
+        }
+
+        return resStates;
+    }
+
+    public String start() {
+        return "";
+    }
 }
