@@ -7,20 +7,23 @@ import java.util.*;
  */
 public class Validator {
     public Validator(Scanner in) {
-        HashMap fileData = formatInFile(in);
+            this.result = "";                       // result of validation
 
-        this.states = (LinkedList<State>)fileData.get("states");
-        this.alpha = (LinkedList<String>)fileData.get("alpha");
-        this.initState = (State)fileData.get("initState");
-        this.finState = (State)fileData.get("finState");
-        this.trans = (LinkedList<LinkedList<State>>) fileData.get("trans");
+            HashMap fileData = formatInFile(in);
+
+            this.states = (LinkedList<State>) fileData.get("states");
+            this.alpha = (LinkedList<String>) fileData.get("alpha");
+            this.initState = (State) fileData.get("initState");
+            this.finState = (State) fileData.get("finState");
+            this.trans = (LinkedList<LinkedList<State>>) fileData.get("trans");
     }
 
-    private LinkedList<State> states;   // set of states of FSA
-    private LinkedList<String> alpha;   // alphabet of FST
-    private State initState;            // initial state of FST
-    private State finState;             // finish state of FST
-    private LinkedList<LinkedList<State>> trans;   // transitions of FST
+    private LinkedList<State> states;               // set of states of FSA
+    private LinkedList<String> alpha;               // alphabet of FST
+    private State initState;                        // initial state of FST
+    private State finState;                         // finish state of FST
+    private LinkedList<LinkedList<State>> trans;    // transitions of FST
+    private String result;                          // result of validation
 
     /**
      * This method formats the input file data into the convenient format of Linked Lists and necessary objects.
@@ -37,6 +40,11 @@ public class Validator {
         String finStateStr = in.next();
         String transStr = in.next();
 
+        if (fileIsMalformed(statesStr, alphaStr, initStateStr, finStateStr, transStr)) {
+            this.result = "E5: Input file is malformed";
+            return fileData;
+        }
+
         LinkedList<State> states = formatStates(statesStr);     // reformat lines
         LinkedList<String> alpha = formatAlpha(alphaStr);
         String initStateName = initStateStr.substring(9, initStateStr.length() - 1);
@@ -50,6 +58,25 @@ public class Validator {
         fileData.put("trans", trans);
 
         return fileData;
+    }
+
+    /**
+     * This method checks whether input file is malformed or not.
+     *
+     * @param statesStr - 1st line of in file
+     * @param alphaStr - 2nd line of in file
+     * @param initStateStr - 3rd line of in file
+     * @param finStateStr - 4th line of in file
+     * @param transStr - 5th line of on file
+     * @return boolean expression answering the given question
+     */
+    private boolean fileIsMalformed(String statesStr, String alphaStr,
+                                    String initStateStr, String finStateStr, String transStr) {
+        return !(statesStr.substring(0, 8).equals("states={") & statesStr.charAt(statesStr.length() - 1) == '}'
+                & alphaStr.substring(0, 7).equals("alpha={") & alphaStr.charAt(alphaStr.length() - 1) == '}'
+                & initStateStr.substring(0, 9).equals("init.st={") & initStateStr.charAt(initStateStr.length() - 1) == '}'
+                & finStateStr.substring(0, 8).equals("fin.st={") & finStateStr.charAt(finStateStr.length() - 1) == '}'
+                & transStr.substring(0, 7).equals("trans={") & transStr.charAt(transStr.length() - 1) == '}');
     }
 
     /**
@@ -133,6 +160,9 @@ public class Validator {
      * @return String with the result of validation which later will be printed into the output file
      */
     public String start() {
-        return "";
+        if (!result.equals(""))    // if file is malformed
+            return result;
+
+        return result;
     }
 }
