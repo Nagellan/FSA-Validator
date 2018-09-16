@@ -22,4 +22,12 @@ public class State {
     public String getName() {
         return name;
     }
+
+    public void addTrans(String letter, State state) {
+        trans.add(new Pair<>(letter, state));
+    }
+
+    public String showTrans(int i) {
+        return name + " > " + trans.get(i).getKey() + " > " + trans.get(i).getValue().getName();
+    }
 }
