@@ -222,8 +222,13 @@ public class Validator {
      */
     private boolean fsaIsNondeterministic() {
         for (State state : states) {
-            if (state.getTrans().size() > alpha.size())
-                return true;
+            LinkedList<String> localAlpha = new LinkedList<>();
+
+            for (Pair<String, State> trans : state.getTrans()) {
+                if (localAlpha.contains(trans.getKey()))
+                    return true;
+                localAlpha.add(trans.getKey());
+            }
         }
 
         return false;
