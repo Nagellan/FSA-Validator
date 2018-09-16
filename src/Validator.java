@@ -70,7 +70,7 @@ public class Validator {
      * @param initStateStr - 3rd line of in file
      * @param finStateStr - 4th line of in file
      * @param transStr - 5th line of on file
-     * @return boolean expression answering the given in method name question
+     * @return boolean expression answering the given in method's name question
      */
     private boolean fileIsMalformed(String statesStr, String alphaStr,
                                     String initStateStr, String finStateStr, String transStr) {
@@ -185,9 +185,12 @@ public class Validator {
             result += "W1: Accepting state is not defined\n";
 
         if (fsaIsComplete())
-            result += "FSA is complete";
+            result += "FSA is complete\n";
         else
-            result += "FSA is incomplete";
+            result += "FSA is incomplete\n";
+
+        if (fsaIsNondeterministic())
+            result += "W3: FSA is nondeterministic\n";
 
         return result;
     }
@@ -195,7 +198,7 @@ public class Validator {
     /**
      * This method checks FSA on completeness.
      *
-     * @return boolean expression answering the given in method name question
+     * @return boolean expression answering the given in method's name question
      */
     private boolean fsaIsComplete() {
         for (State state : states) {
@@ -210,5 +213,19 @@ public class Validator {
         }
 
         return true;
+    }
+
+    /**
+     * This method checks whether FSA is nondeterministic or not.
+     *
+     * @return boolean expression answering the given in method's name question
+     */
+    private boolean fsaIsNondeterministic() {
+        for (State state : states) {
+            if (state.getTrans().size() > alpha.size())
+                return true;
+        }
+
+        return false;
     }
 }
