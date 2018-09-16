@@ -7,7 +7,7 @@ import java.util.*;
  */
 public class Validator {
     public Validator(Scanner in) {
-        Dictionary fileData = formatInFile(in);
+        HashMap fileData = formatInFile(in);
 
         this.states = (LinkedList<State>)fileData.get("states");
         this.alpha = (LinkedList<String>)fileData.get("alpha");
@@ -26,10 +26,10 @@ public class Validator {
      * This method formats the input file data into the convenient format of Linked Lists and necessary objects.
      *
      * @param in - input file with data to format
-     * @return Dictionary with formatted data
+     * @return HashMap with formatted data
      */
-    private Dictionary formatInFile(Scanner in) {
-        Dictionary fileData = new Hashtable();
+    private HashMap formatInFile(Scanner in) {
+        HashMap fileData = new HashMap();
 
         String statesStr = in.next();           // read lines from the input file
         String alphaStr = in.next();
@@ -46,7 +46,7 @@ public class Validator {
         fileData.put("states", states);
         fileData.put("alpha", alpha);
         fileData.put("initState", findByName(initStateName, states));
-        //fileData.put("finState", findByName(finStateName, states));
+        fileData.put("finState", findByName(finStateName, states));
         fileData.put("trans", trans);
 
         return fileData;
