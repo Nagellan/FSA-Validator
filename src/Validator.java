@@ -9,18 +9,18 @@ public class Validator {
     public Validator(Scanner in) {
         Dictionary fileData = formatInFile(in);
 
-        this.states = (LinkedList<State>) fileData.get("states");
-        this.alpha = (LinkedList<String>) fileData.get("alpha");
-        this.initState = (State) fileData.get("initState");
-        this.finState = (State) fileData.get("finState");
-        this.trans = (LinkedList<String>) fileData.get("trans");
+        this.states = (LinkedList<State>)fileData.get("states");
+        this.alpha = (LinkedList<String>)fileData.get("alpha");
+        this.initState = (State)fileData.get("initState");
+        this.finState = (State)fileData.get("finState");
+        this.trans = (LinkedList<LinkedList<State>>) fileData.get("trans");
     }
 
     private LinkedList<State> states;   // set of states of FSA
     private LinkedList<String> alpha;   // alphabet of FST
     private State initState;            // initial state of FST
     private State finState;             // finish state of FST
-    private LinkedList<String> trans;   // transitions of FST
+    private LinkedList<LinkedList<State>> trans;   // transitions of FST
 
     /**
      * This method formats the input file data into the convenient format of Linked Lists and necessary objects.
@@ -41,12 +41,12 @@ public class Validator {
         LinkedList<String> alpha = formatAlpha(alphaStr);
         String initStateName = initStateStr.substring(9, initStateStr.length() - 1);
         String finStateName = finStateStr.substring(8, finStateStr.length() - 1);
-        LinkedList<String> trans = formatTrans(transStr);
+        LinkedList<LinkedList<State>> trans = formatTrans(transStr, states);
 
         fileData.put("states", states);
         fileData.put("alpha", alpha);
-        fileData.put("initState", new State(initStateName));
-        fileData.put("finState", new State(finStateName));
+        fileData.put("initState", findByName(initStateName, states));
+        //fileData.put("finState", findByName(finStateName, states));
         fileData.put("trans", trans);
 
         return fileData;
@@ -88,17 +88,27 @@ public class Validator {
 
     /**
      * This method casts the given string with transition's description (5th line of input file) to a convenient format -
-     * linked list of transitions.
+     * linked list containing a list of 2 states - connected by this transition.
+     * Both these states store a transition to another states.
      *
      * @param transStr - 5th line of input file with transition's description
-     * @return LinkedList of Strings (transitions)
+     * @return LinkedList of pairs: connected first and second states
      */
-    private LinkedList<String> formatTrans(String transStr) {
-        LinkedList<String> resTrans = new LinkedList<>();
+    private LinkedList<LinkedList<State>> formatTrans(String transStr, LinkedList<State> states) {
+        LinkedList<LinkedList<State>> resTrans = new LinkedList<>();
         String[] trans = transStr.substring(7, transStr.length() - 1).split(",");
 
-        resTrans.addAll(Arrays.asList(trans));
+        for (String transitionStr : trans) {
+            String[] transSep = transitionStr.split(">");
+            State state1 = findByName(transSep[0], states);
+            State state2 = findByName(transSep[2], states);
 
+            state1.addTrans(transSep[1], state2);
+            if (state1 != state2)
+                state2.addTrans(transSep[1], state1);
+
+            resTrans.add(new LinkedList(Arrays.asList(state1, state2)));
+        }
         return resTrans;
     }
 
@@ -108,8 +118,8 @@ public class Validator {
      * @param name - name of state to find
      * @return state with given name
      */
-    private State findByName(String name) {
-        for (State state : this.states) {
+    private State findByName(String name, LinkedList<State> states) {
+        for (State state : states) {
             if (state.getName().equals(name))
                 return state;
         }
