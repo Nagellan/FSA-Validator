@@ -23,6 +23,10 @@ public class State {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     /**
      * This method adds a new transition to the state (add a new element to the 'trans' list).
      *
