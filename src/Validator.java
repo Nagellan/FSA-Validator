@@ -50,7 +50,7 @@ public class Validator {
         LinkedList<String> alpha = formatAlpha(alphaStr);
         String initStateName = initStateStr.substring(9, initStateStr.length() - 1);
         String finStateName = finStateStr.substring(8, finStateStr.length() - 1);
-        LinkedList<LinkedList<State>> trans = formatTrans(transStr, states);
+        LinkedList<LinkedList<State>> trans = formatTrans(transStr, states, alpha);
 
         fileData.put("states", states);
         fileData.put("alpha", alpha);
@@ -120,16 +120,23 @@ public class Validator {
      * Both these states store a transition to another states.
      *
      * @param transStr - 5th line of input file with transition's description
+     * @param states - linked list of states
+     * @param alpha - linked list of letters of an alphabet of FSA
      * @return LinkedList of pairs: connected first and second states
      */
-    private LinkedList<LinkedList<State>> formatTrans(String transStr, LinkedList<State> states) {
+    private LinkedList<LinkedList<State>> formatTrans(String transStr,
+                                                      LinkedList<State> states, LinkedList<String> alpha) {
         LinkedList<LinkedList<State>> resTrans = new LinkedList<>();
         String[] trans = transStr.substring(7, transStr.length() - 1).split(",");
+        Boolean isInAlpha = true;
 
         for (String transitionStr : trans) {
             String[] transSep = transitionStr.split(">");
             State state1 = findByName(transSep[0], states);
             State state2 = findByName(transSep[2], states);
+
+            if (!alpha.contains(transSep[1]))
+                isInAlpha = false;
 
             if (state1 != null)
                 state1.addTrans(transSep[1], state2);
@@ -138,6 +145,9 @@ public class Validator {
 
             resTrans.add(new LinkedList(Arrays.asList(state1, state2)));
         }
+        if (!isInAlpha)
+            this.result += "E3: A transition a is not represented in the alphabet\n";
+
         return resTrans;
     }
 
@@ -145,6 +155,7 @@ public class Validator {
      * This method finds and returns state in State list by the name. It also checks Error 1.
      *
      * @param name - name of state to find
+     * @param states - linked list of states
      * @return state with given name
      */
     private State findByName(String name, LinkedList<State> states) {
@@ -169,10 +180,10 @@ public class Validator {
             return result;
 
         if (initState == null)
-            result += "E4: Initial state is not defined";
+            result += "E4: Initial state is not defined\n";
 
         if (finState == null)
-            result += "W1: Accepting state is not defined";
+            result += "W1: Accepting state is not defined\n";
 
         return result;
     }
