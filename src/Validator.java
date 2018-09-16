@@ -1,3 +1,4 @@
+import javafx.util.Pair;
 import java.util.*;
 
 /**
@@ -69,7 +70,7 @@ public class Validator {
      * @param initStateStr - 3rd line of in file
      * @param finStateStr - 4th line of in file
      * @param transStr - 5th line of on file
-     * @return boolean expression answering the given question
+     * @return boolean expression answering the given in method name question
      */
     private boolean fileIsMalformed(String statesStr, String alphaStr,
                                     String initStateStr, String finStateStr, String transStr) {
@@ -171,7 +172,7 @@ public class Validator {
 
     /**
      * This method starts the validation of FSA and returns its result.
-     * It checks the E5, E4, W1.
+     * It checks the E5, E4, W1, completeness.
      *
      * @return String with the result of validation
      */
@@ -185,6 +186,31 @@ public class Validator {
         if (finState == null)
             result += "W1: Accepting state is not defined\n";
 
+        if (fsaIsComplete())
+            result += "FSA is complete";
+        else
+            result += "FSA is incomplete";
+
         return result;
+    }
+
+    /**
+     * This method checks FSA on completeness.
+     *
+     * @return boolean expression answering the given in method name question
+     */
+    private boolean fsaIsComplete() {
+        for (State state : states) {
+            LinkedList<String> localAlpha = new LinkedList<>();
+
+            for (Pair<String, State> trans : state.getTrans())
+                if (!localAlpha.contains(trans.getKey()))
+                    localAlpha.add(trans.getKey());
+
+            if (localAlpha.size() != alpha.size())
+                return false;
+        }
+
+        return true;
     }
 }
