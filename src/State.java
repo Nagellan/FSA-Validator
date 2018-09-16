@@ -23,11 +23,22 @@ public class State {
         return name;
     }
 
+    /**
+     * This method adds a new transition to the state (add a new element to the 'trans' list).
+     *
+     * @param letter - name of transition
+     * @param state - state which is connected to the current state by the given transition
+     */
     public void addTrans(String letter, State state) {
         trans.add(new Pair<>(letter, state));
     }
 
-    public String showTrans(int i) {
-        return name + " > " + trans.get(i).getKey() + " > " + trans.get(i).getValue().getName();
+    /**
+     * This is a getter for 'trans' list.
+     *
+     * @return
+     */
+    public LinkedList<Pair<String, State>> getTrans() {
+        return trans;
     }
 }
