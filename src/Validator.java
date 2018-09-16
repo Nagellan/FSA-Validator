@@ -141,8 +141,6 @@ public class Validator {
 
             if (state1 != null)
                 state1.addTrans(transSep[1], state2);
-            if (state2 != null & state1 != state2)
-                state2.addTrans(transSep[1], state1);
 
             resTrans.add(new LinkedList(Arrays.asList(state1, state2)));
         }
