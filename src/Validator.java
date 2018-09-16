@@ -27,6 +27,7 @@ public class Validator {
 
     /**
      * This method formats the input file data into the convenient format of Linked Lists and necessary objects.
+     * In addition, it also checks on an Error 5.
      *
      * @param in - input file with data to format
      * @return HashMap with formatted data
@@ -130,8 +131,9 @@ public class Validator {
             State state1 = findByName(transSep[0], states);
             State state2 = findByName(transSep[2], states);
 
-            state1.addTrans(transSep[1], state2);
-            if (state1 != state2)
+            if (state1 != null)
+                state1.addTrans(transSep[1], state2);
+            if (state2 != null & state1 != state2)
                 state2.addTrans(transSep[1], state1);
 
             resTrans.add(new LinkedList(Arrays.asList(state1, state2)));
@@ -140,7 +142,7 @@ public class Validator {
     }
 
     /**
-     * This method finds and returns state in State list by the name
+     * This method finds and returns state in State list by the name. It also checks Error 1.
      *
      * @param name - name of state to find
      * @return state with given name
@@ -150,6 +152,8 @@ public class Validator {
             if (state.getName().equals(name))
                 return state;
         }
+        if (!name.equals(""))
+            this.result += "E1: A state s is not in set of states\n";
 
         return null;
     }
@@ -160,7 +164,7 @@ public class Validator {
      * @return String with the result of validation which later will be printed into the output file
      */
     public String start() {
-        if (!result.equals(""))    // if file is malformed
+        if (!result.isEmpty() && result.substring(0, 2).equals("E5"))
             return result;
 
         return result;
