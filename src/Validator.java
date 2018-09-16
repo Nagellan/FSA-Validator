@@ -192,6 +192,10 @@ public class Validator {
         if (fsaIsNondeterministic())
             result += "W3: FSA is nondeterministic\n";
 
+        LinkedList<State> reachedStates = statesReachableFrom(initState, new LinkedList<>());
+        if (reachedStates.size() != states.size())
+            result += "W2: Some states are not reachable from initial state";
+
         return result;
     }
 
@@ -232,5 +236,21 @@ public class Validator {
         }
 
         return false;
+    }
+
+    /**
+     * This function performs recursively Depth First Search in the States graph from the given State.
+     * The search allows to figure out whether all states can be reached from the given one or not.
+     *
+     * @param state - starting state of search
+     * @param result - LinkedList of all reached states
+     * @return - result (see above)
+     */
+    private LinkedList<State> statesReachableFrom(State state, LinkedList<State> result) {
+        result.add(state);
+        for (Pair<String, State> trans : state.getTrans())
+            if (!result.contains(trans.getValue()))
+                result = statesReachableFrom(trans.getValue(), result);
+        return result;
     }
 }

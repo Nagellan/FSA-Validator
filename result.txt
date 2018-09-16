@@ -1,2 +1,1 @@
 FSA is incomplete
-W3: FSA is nondeterministic
