@@ -159,13 +159,20 @@ public class Validator {
     }
 
     /**
-     * This method starts the validation of FSA.
+     * This method starts the validation of FSA and returns its result.
+     * It checks the E5, E4, W1.
      *
-     * @return String with the result of validation which later will be printed into the output file
+     * @return String with the result of validation
      */
     public String start() {
         if (!result.isEmpty() && result.substring(0, 2).equals("E5"))
             return result;
+
+        if (initState == null)
+            result += "E4: Initial state is not defined";
+
+        if (finState == null)
+            result += "W1: Accepting state is not defined";
 
         return result;
     }
