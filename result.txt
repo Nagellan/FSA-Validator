@@ -1,1 +1,2 @@
+W1: Accepting state is not defined
 FSA is incomplete

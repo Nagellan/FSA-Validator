@@ -8,15 +8,15 @@ import java.util.*;
  */
 public class Validator {
     public Validator(Scanner in) {
-            this.result = "";                       // result of validation
+        this.result = "";                       // result of validation
 
-            HashMap fileData = formatInFile(in);
+        HashMap fileData = formatInFile(in);
 
-            this.states = (LinkedList<State>) fileData.get("states");
-            this.alpha = (LinkedList<String>) fileData.get("alpha");
-            this.initState = (State) fileData.get("initState");
-            this.finState = (State) fileData.get("finState");
-            this.trans = (LinkedList<LinkedList<State>>) fileData.get("trans");
+        this.states = (LinkedList<State>) fileData.get("states");
+        this.alpha = (LinkedList<String>) fileData.get("alpha");
+        this.initState = (State) fileData.get("initState");
+        this.finState = (State) fileData.get("finState");
+        this.trans = (LinkedList<LinkedList<State>>) fileData.get("trans");
     }
 
     private LinkedList<State> states;               // set of states of FSA
@@ -192,9 +192,14 @@ public class Validator {
         if (fsaIsNondeterministic())
             result += "W3: FSA is nondeterministic\n";
 
-        LinkedList<State> reachedStates = statesReachableFrom(initState, new LinkedList<>());
+        LinkedList<State> reachedStates = getReachableStatesFrom(initState, states, new LinkedList<>());
         if (reachedStates.size() != states.size())
-            result += "W2: Some states are not reachable from initial state";
+            result += "W2: Some states are not reachable from initial state\n";
+
+        LinkedList<State> undirectedStates = makeUndirected((LinkedList<State>) states.clone());
+        reachedStates = getReachableStatesFrom(states.get(0), undirectedStates, new LinkedList<>());
+        if (reachedStates.size() != states.size())
+            result += "E2: Some states are disjoint\n";
 
         return result;
     }
@@ -246,11 +251,26 @@ public class Validator {
      * @param result - LinkedList of all reached states
      * @return - result (see above)
      */
-    private LinkedList<State> statesReachableFrom(State state, LinkedList<State> result) {
+    private LinkedList<State> getReachableStatesFrom(State state, LinkedList<State> states, LinkedList<State> result) {
         result.add(state);
         for (Pair<String, State> trans : state.getTrans())
             if (!result.contains(trans.getValue()))
-                result = statesReachableFrom(trans.getValue(), result);
+                result = getReachableStatesFrom(trans.getValue(), states, result);
         return result;
+    }
+
+    /**
+     * This method makes the graph undirected (LinkedList of states).
+     *
+     * @param states - directed graph (LinkedList of states)
+     * @return undirected version of given directed graph
+     */
+    private LinkedList<State> makeUndirected(LinkedList<State> states) {
+        for (State state : states)
+            for (Pair<String, State> trans : state.getTrans())
+                if (!trans.getValue().getTrans().contains(new Pair<>(trans.getKey(), state)))
+                    trans.getValue().addTrans(trans.getKey(), state);
+
+        return states;
     }
 }
