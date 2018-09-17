@@ -1,4 +1,4 @@
-states={on,off}
+states={on}
 alpha={turn_on,turn_off}
 init.st={off}
 fin.st={on,off}

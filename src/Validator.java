@@ -16,14 +16,14 @@ public class Validator {
         this.states = (LinkedList<State>) fileData.get("states");
         this.alpha = (LinkedList<String>) fileData.get("alpha");
         this.initState = (State) fileData.get("initState");
-        this.finState = (State) fileData.get("finState");
+        this.finStates = (LinkedList<State>) fileData.get("finState");
         this.trans = (LinkedList<LinkedList<State>>) fileData.get("trans");
     }
 
     private LinkedList<State> states;               // set of states of FSA
     private LinkedList<String> alpha;               // alphabet of FST
     private State initState;                        // initial state of FST
-    private State finState;                         // finish state of FST
+    private LinkedList<State> finStates;            // final states of FST
     private LinkedList<LinkedList<State>> trans;    // transitions of FST
     private String[] result;                        // result of validation
 
@@ -51,13 +51,13 @@ public class Validator {
         LinkedList<State> states = formatStates(statesStr);     // reformat lines
         LinkedList<String> alpha = formatAlpha(alphaStr);
         String initStateName = initStateStr.substring(9, initStateStr.length() - 1);
-        String finStateName = finStateStr.substring(8, finStateStr.length() - 1);
+        LinkedList<State> finStateName = formatFinStates(finStateStr, states);
         LinkedList<LinkedList<State>> trans = formatTrans(transStr, states, alpha);
 
         fileData.put("states", states);
         fileData.put("alpha", alpha);
         fileData.put("initState", findByName(initStateName, states));
-        fileData.put("finState", findByName(finStateName, states));
+        fileData.put("finState", finStateName);
         fileData.put("trans", trans);
 
         return fileData;
@@ -114,6 +114,25 @@ public class Validator {
         resAlpha.addAll(Arrays.asList(alpha));
 
         return resAlpha;
+    }
+
+    /**
+     * This method casts the given string with final states' description (4th line of input file) to a convenient format -
+     * linked list of final States.
+     *
+     * @param finStateStr - 4th line of input file with final states' description
+     * @param states - linked list of states
+     * @return Linked List of final states
+     */
+    private LinkedList<State> formatFinStates(String finStateStr, LinkedList<State> states) {
+        LinkedList<State> resFinStates = new LinkedList<>();
+        String[] finStates = finStateStr.substring(8, finStateStr.length() - 1).split(",");
+
+        for (String finState : finStates) {
+            resFinStates.add(findByName(finState, states));
+        }
+
+        return resFinStates;
     }
 
     /**
@@ -191,7 +210,7 @@ public class Validator {
             else
                 result[6] = "FSA is incomplete\n";
 
-            if (finState == null)                             // check W1
+            if (finStates.size() == 0)                             // check W1
                 result[8] = "W1: Accepting state is not defined\n";
 
             if (initState != null) {                          // check W2
