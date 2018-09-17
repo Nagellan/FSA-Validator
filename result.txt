@@ -1,3 +1,2 @@
-FSA is incomplete
-Warning:
-W2: Some states are not reachable from initial state
+Error:
+E1: A state 'on,off' is not in set of states

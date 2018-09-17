@@ -209,8 +209,11 @@ public class Validator {
 
         LinkedList<State> undirectedStates = makeUndirected((LinkedList<State>) states.clone());
         LinkedList<State> reachedStates = getReachableStatesFrom(states.get(0), undirectedStates, new LinkedList<>());
-        if (reachedStates.size() != states.size())
+        if (reachedStates.size() != states.size()) {
             result[2] = "E2: Some states are disjoint\n";     // check E2
+            result[0] = "Error:\n";
+            result = Arrays.copyOfRange(result, 0, 4);
+        }
 
         return arrayToStr(result);
     }
@@ -227,7 +230,7 @@ public class Validator {
         for (String str : result)
             res += str;
 
-        return res;
+        return res.substring(0, res.length() - 1);  // return the string without last line break
     }
 
     /**
