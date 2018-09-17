@@ -2,4 +2,4 @@ states={on,off}
 alpha={turn_on,turn_off}
 init.st={off}
 fin.st={}
-trans={off>turn_on>on,on>turn_off>off}
+trans={of>turn_op>on,on>turn_off>off}

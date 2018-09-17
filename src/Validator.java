@@ -129,7 +129,7 @@ public class Validator {
                                                       LinkedList<State> states, LinkedList<String> alpha) {
         LinkedList<LinkedList<State>> resTrans = new LinkedList<>();
         String[] trans = transStr.substring(7, transStr.length() - 1).split(",");
-        Boolean isInAlpha = true;
+        String excessTrans = "";
 
         for (String transitionStr : trans) {
             String[] transSep = transitionStr.split(">");
@@ -137,15 +137,15 @@ public class Validator {
             State state2 = findByName(transSep[2], states);
 
             if (!alpha.contains(transSep[1]))
-                isInAlpha = false;
+                excessTrans = transSep[1];
 
             if (state1 != null)
                 state1.addTrans(transSep[1], state2);
 
             resTrans.add(new LinkedList(Arrays.asList(state1, state2)));
         }
-        if (!isInAlpha)
-            this.result += "E3: A transition a is not represented in the alphabet\n";
+        if (!excessTrans.equals(""))
+            this.result += "E3: A transition '" + excessTrans + "' is not represented in the alphabet\n";
 
         return resTrans;
     }
@@ -163,7 +163,7 @@ public class Validator {
                 return state;
         }
         if (!name.equals(""))
-            this.result += "E1: A state s is not in set of states\n";
+            this.result += "E1: A state '" + name + "' is not in set of states\n";
 
         return null;
     }
