@@ -8,7 +8,8 @@ import java.util.*;
  */
 public class Validator {
     public Validator(Scanner in) {
-        this.result = "";                       // result of validation
+        this.result = new String[11];                       // result of validation
+        Arrays.fill(this.result, "");                   // setting default values to the result array
 
         HashMap fileData = formatInFile(in);
 
@@ -24,7 +25,7 @@ public class Validator {
     private State initState;                        // initial state of FST
     private State finState;                         // finish state of FST
     private LinkedList<LinkedList<State>> trans;    // transitions of FST
-    private String result;                          // result of validation
+    private String[] result;                        // result of validation
 
     /**
      * This method formats the input file data into the convenient format of Linked Lists and necessary objects.
@@ -43,7 +44,7 @@ public class Validator {
         String transStr = in.next();
 
         if (fileIsMalformed(statesStr, alphaStr, initStateStr, finStateStr, transStr)) {
-            this.result = "E5: Input file is malformed";
+            result[5] = "E5: Input file is malformed";      // E5 check and force function's break
             return fileData;
         }
 
@@ -144,8 +145,8 @@ public class Validator {
 
             resTrans.add(new LinkedList(Arrays.asList(state1, state2)));
         }
-        if (!excessTrans.equals(""))
-            this.result += "E3: A transition '" + excessTrans + "' is not represented in the alphabet\n";
+        if (!excessTrans.equals(""))    // E3 check
+            result[3] = "E3: A transition '" + excessTrans + "' is not represented in the alphabet\n";
 
         return resTrans;
     }
@@ -162,46 +163,71 @@ public class Validator {
             if (state.getName().equals(name))
                 return state;
         }
-        if (!name.equals(""))
-            this.result += "E1: A state '" + name + "' is not in set of states\n";
+        if (!name.equals(""))   // E1 check
+            result[1] = "E1: A state '" + name + "' is not in set of states\n";
 
         return null;
     }
 
     /**
      * This method starts the validation of FSA and returns its result.
-     * It checks the E5, E4, W1, completeness.
+     * It checks the E2, E4, W1, W2, W3, completeness.
      *
      * @return String with the result of validation
      */
     public String start() {
-        if (!result.isEmpty() && result.substring(0, 2).equals("E5"))
-            return result;
+         if (!result[5].equals(""))                           // if there's E5, just return message with only this error
+            return result[5];
 
-        if (initState == null)
-            result += "E4: Initial state is not defined\n";
+        if (initState == null)                                //E4 check
+            result[4] = "E4: Initial state is not defined\n";
 
-        if (finState == null)
-            result += "W1: Accepting state is not defined\n";
+        if (!result[1].equals("") || !result[3].equals("") || !result[4].equals(""))
+            result[0] = "Error:\n";                           // add Error label if needed
 
-        if (fsaIsComplete())
-            result += "FSA is complete\n";
-        else
-            result += "FSA is incomplete\n";
+        if (result[0].equals("")) {                           // if there's no error, check Warnings and completeness
+            if (fsaIsComplete())
+                result[6] = "FSA is complete\n";              // check the completeness
+            else
+                result[6] = "FSA is incomplete\n";
 
-        if (fsaIsNondeterministic())
-            result += "W3: FSA is nondeterministic\n";
+            if (finState == null)                             // check W1
+                result[8] = "W1: Accepting state is not defined\n";
 
-        LinkedList<State> reachedStates = getReachableStatesFrom(initState, states, new LinkedList<>());
-        if (reachedStates.size() != states.size())
-            result += "W2: Some states are not reachable from initial state\n";
+            if (initState != null) {                          // check W2
+                LinkedList<State> reachedStatesW = getReachableStatesFrom(initState, states, new LinkedList<>());
+                if (reachedStatesW.size() != states.size())
+                    result[9] = "W2: Some states are not reachable from initial state\n";
+            }
+
+            if (fsaIsNondeterministic())                      // check W3
+                result[10] = "W3: FSA is nondeterministic\n";
+
+            if (!result[8].equals("") || !result[9].equals("") || !result[10].equals(""))
+                result[7] = "Warning:\n";                     // add Warning label if needed
+        }
 
         LinkedList<State> undirectedStates = makeUndirected((LinkedList<State>) states.clone());
-        reachedStates = getReachableStatesFrom(states.get(0), undirectedStates, new LinkedList<>());
+        LinkedList<State> reachedStates = getReachableStatesFrom(states.get(0), undirectedStates, new LinkedList<>());
         if (reachedStates.size() != states.size())
-            result += "E2: Some states are disjoint\n";
+            result[2] = "E2: Some states are disjoint\n";     // check E2
 
-        return result;
+        return arrayToStr(result);
+    }
+
+    /**
+     * This function transforms array of strings into the string
+     *
+     * @param result - array of strings
+     * @return concatenation of all strings consisting in 'result' array
+     */
+    private String arrayToStr(String[] result) {
+        String res = "";
+
+        for (String str : result)
+            res += str;
+
+        return res;
     }
 
     /**
@@ -270,7 +296,6 @@ public class Validator {
             for (Pair<String, State> trans : state.getTrans())
                 if (!trans.getValue().getTrans().contains(new Pair<>(trans.getKey(), state)))
                     trans.getValue().addTrans(trans.getKey(), state);
-
         return states;
     }
 }
