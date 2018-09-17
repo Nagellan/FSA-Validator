@@ -93,9 +93,8 @@ public class Validator {
         LinkedList<State> resStates = new LinkedList<>();
         String[] states = statesStr.substring(8, statesStr.length() - 1).split(",");
 
-        for (String stateName : states) {
+        for (String stateName : states)
             resStates.add(new State(stateName));
-        }
 
         return resStates;
     }
@@ -128,9 +127,8 @@ public class Validator {
         LinkedList<State> resFinStates = new LinkedList<>();
         String[] finStates = finStateStr.substring(8, finStateStr.length() - 1).split(",");
 
-        for (String finState : finStates) {
+        for (String finState : finStates)
             resFinStates.add(findByName(finState, states));
-        }
 
         return resFinStates;
     }
@@ -182,8 +180,10 @@ public class Validator {
             if (state.getName().equals(name))
                 return state;
         }
-        if (!name.equals(""))   // E1 check
+        if (!name.equals("")) {   // E1 check
             result[1] = "E1: A state '" + name + "' is not in set of states\n";
+            states.add(new State(name));
+        }
 
         return null;
     }
