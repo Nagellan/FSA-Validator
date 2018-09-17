@@ -210,7 +210,7 @@ public class Validator {
             else
                 result[6] = "FSA is incomplete\n";
 
-            if (finStates.size() == 0)                             // check W1
+            if (finStates.size() == 1 & finStates.get(0) == null)                             // check W1
                 result[8] = "W1: Accepting state is not defined\n";
 
             if (initState != null) {                          // check W2
